@@ -3,6 +3,18 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true
+  },
+  "projects": {
+    "prisma-client-library": {
+      "type": "library",
+      "root": "libs/prisma-client-library",
+      "entryFile": "index",
+      "sourceRoot": "libs/prisma-client-library/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/prisma-client-library/tsconfig.lib.json"
+      }
+    }
   }
 }

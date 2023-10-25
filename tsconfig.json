@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "strict":true,
+    "strict": true,
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -17,6 +17,14 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@app/prisma-client-library": [
+        "libs/prisma-client-library/src"
+      ],
+      "@app/prisma-client-library/*": [
+        "libs/prisma-client-library/src/*"
+      ]
+    }
   }
 }
