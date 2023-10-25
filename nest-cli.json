@@ -33,6 +33,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/decorators/tsconfig.lib.json"
       }
+    },
+    "shared-jwt": {
+      "type": "library",
+      "root": "libs/shared-jwt",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared-jwt/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared-jwt/tsconfig.lib.json"
+      }
     }
   }
 }

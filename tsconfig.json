@@ -36,6 +36,12 @@
       ],
       "@app/decorators/*": [
         "libs/decorators/src/*"
+      ],
+      "@app/shared-jwt": [
+        "libs/shared-jwt/src"
+      ],
+      "@app/shared-jwt/*": [
+        "libs/shared-jwt/src/*"
       ]
     }
   }

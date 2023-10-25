@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AccountsModule } from './accounts/accounts.module';
-import { SharedJWTModule } from './accounts/auth/sharedJWT/sharedJWT.module';
+import { SharedJwtModule } from '@app/shared-jwt';
+// import { SharedJWTModule } from './accounts/auth/sharedJWT/sharedJWT.module';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { SharedJWTModule } from './accounts/auth/sharedJWT/sharedJWT.module';
       rootPath: join(__dirname, '..', 'client'),
     }),
     AccountsModule,
-    SharedJWTModule,
+    SharedJwtModule,
   ],
   controllers: [],
   providers: [],

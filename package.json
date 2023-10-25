@@ -85,7 +85,8 @@
     "moduleNameMapper": {
       "^@app/prisma-client-library(|/.*)$": "<rootDir>/libs/prisma-client-library/src/$1",
       "^@app/interfaces(|/.*)$": "<rootDir>/libs/interfaces/src/$1",
-      "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1"
+      "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1",
+      "^@app/shared-jwt(|/.*)$": "<rootDir>/libs/shared-jwt/src/$1"
     }
   }
 }

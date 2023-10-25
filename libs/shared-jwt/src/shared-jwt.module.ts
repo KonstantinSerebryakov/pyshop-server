@@ -1,12 +1,8 @@
-// shared/shared.module.ts
-
 import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './jwt.strategy';
-import { JWTAuthGuard } from './jwt.guard';
-import { UserId } from './user.decorator';
 import { getJWTConfig } from './jwt.config';
+import { JwtStrategy } from './jwt.strategy';
 
 @Global()
 @Module({
@@ -14,4 +10,4 @@ import { getJWTConfig } from './jwt.config';
   providers: [JwtStrategy],
   exports: [JwtStrategy],
 })
-export class SharedJWTModule {}
+export class SharedJwtModule {}
