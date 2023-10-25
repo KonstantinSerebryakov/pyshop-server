@@ -1,0 +1,31 @@
+name: Server Deployment
+
+on:
+  workflow_run:
+    workflows: ["Client Build and Deploy"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download Client Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: client-build
+
+      - name: Move Client Build Artifacts to Static Folder
+        run: mv client-build/* client
+
+      - name: Commit and Push Changes
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add .
+          git commit -m "Update client build artifacts"
+          git push
