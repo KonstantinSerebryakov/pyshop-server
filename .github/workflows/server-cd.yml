@@ -1,10 +1,9 @@
 name: Server Deployment
 
 on:
-  workflow_run:
-    workflows: ["Client Build and Deploy"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
