@@ -12,6 +12,10 @@
   },
   "moduleNameMapper": {
     "@app/prisma-client-library/(.*)": "<rootDir>/../libs/prisma-client-library/src/$1",
-    "@app/prisma-client-library": "<rootDir>/../libs/prisma-client-library/src"
+    "@app/prisma-client-library": "<rootDir>/../libs/prisma-client-library/src",
+    "@app/interfaces/(.*)": "<rootDir>/../libs/interfaces/src/$1",
+    "@app/interfaces": "<rootDir>/../libs/interfaces/src",
+    "@app/decorators/(.*)": "<rootDir>/../libs/decorators/src/$1",
+    "@app/decorators": "<rootDir>/../libs/decorators/src"
   }
 }
