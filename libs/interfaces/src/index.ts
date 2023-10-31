@@ -1,2 +1,2 @@
-export * from './interfaces/user.interface';
-export * from './interfaces/user-info.interface';
+export * from './interfaces/accounts/user.interface';
+export * from './interfaces/accounts/user-info.interface';

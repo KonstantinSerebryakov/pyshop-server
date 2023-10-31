@@ -20,10 +20,13 @@ model User {
 }
 
 model UserInfo {
-  id           String @id @unique @default(cuid())
-  userId       String @unique
-  email        String @unique
-  passwordHash String
+  id     String @id @unique @default(cuid())
+  userId String @unique
+
+  name    String?
+  phone   String?
+  address String?
+  about   String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

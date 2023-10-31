@@ -42,6 +42,12 @@
       ],
       "@app/shared-jwt/*": [
         "libs/shared-jwt/src/*"
+      ],
+      "@app/events": [
+        "libs/events/src"
+      ],
+      "@app/events/*": [
+        "libs/events/src/*"
       ]
     }
   }

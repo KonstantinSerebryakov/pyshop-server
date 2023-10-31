@@ -18,6 +18,8 @@
     "@app/decorators/(.*)": "<rootDir>/../libs/decorators/src/$1",
     "@app/decorators": "<rootDir>/../libs/decorators/src",
     "@app/shared-jwt/(.*)": "<rootDir>/../libs/shared-jwt/src/$1",
-    "@app/shared-jwt": "<rootDir>/../libs/shared-jwt/src"
+    "@app/shared-jwt": "<rootDir>/../libs/shared-jwt/src",
+    "@app/events/(.*)": "<rootDir>/../libs/events/src/$1",
+    "@app/events": "<rootDir>/../libs/events/src"
   }
 }
