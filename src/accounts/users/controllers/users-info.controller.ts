@@ -24,7 +24,9 @@ export class UsersInfoController {
 
   @UseGuards(JWTAuthGuard)
   @Get('name')
-  async getNameField(@UserId() userId: string) {}
+  async getNameField(@UserId() userId: string) {
+    // 
+  }
 
   @UseGuards(JWTAuthGuard)
   @Get('phone')
