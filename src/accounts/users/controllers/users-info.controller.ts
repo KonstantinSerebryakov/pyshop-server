@@ -2,69 +2,165 @@ import { JWTAuthGuard, UserId } from '@app/shared-jwt';
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Delete,
   Put,
   UseGuards,
+  Res,
+  NotFoundException,
 } from '@nestjs/common';
+import { UsersInfoRepository } from '../repositories/users-info.repository';
+import { UpdateUserInfoDto } from '../dto/update-users-info.dto';
+import { UserInfoEntity } from '../entities/user-info.entity';
+import { Response } from 'express';
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UserInfoResponseDto } from '../dto/users-info-response.dto';
+import {
+  PARAM_USER_ID,
+  PARAM_USER_INFO_ID,
+} from '@app/interfaces/url-params/params';
+import { ResourceAccessGuard } from '@app/shared-jwt/user-access.guard';
 
-@Controller('users/info')
+@ApiTags('Users/Info')
+@Controller(`users/:${PARAM_USER_ID}/info`)
 export class UsersInfoController {
-  constructor() {}
+  constructor(private readonly usersInfoRepository: UsersInfoRepository) {}
 
-  @UseGuards(JWTAuthGuard)
+  @ApiNotFoundResponse({
+    description: 'Not found',
+  })
+  @ApiOkResponse({
+    type: UserInfoResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'you do not have permission to access this resource',
+  })
+  @UseGuards(JWTAuthGuard, ResourceAccessGuard)
+  // @UseGuards(ResourceAccessGuard)
   @Get()
-  async get(@UserId() userId: string) {
-    console.log(userId);
-    return userId;
+  async getByUserId(
+    @Param(PARAM_USER_ID) requestedUserId: string,
+    @UserId() userId: string,
+  ) {
+    const data = await this.usersInfoRepository.findOneByUserId(requestedUserId); // prettier-ignore
+    if (!data) throw new NotFoundException();
+
+    return data;
   }
 
-  @UseGuards(JWTAuthGuard)
-  @Get('name')
-  async getNameField(@UserId() userId: string) {
-    // 
+  @ApiNotFoundResponse({
+    description: 'Not found',
+  })
+  @ApiOkResponse({
+    type: UserInfoResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description: 'you do not have permission to access this resource',
+  })
+  @UseGuards(JWTAuthGuard, ResourceAccessGuard)
+  // @UseGuards(ResourceAccessGuard)
+  @Get(`:${PARAM_USER_INFO_ID}`)
+  async getByResourceId(
+    @Param(PARAM_USER_ID) requestedUserId: string,
+    @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
+    @UserId() userId: string,
+  ) {
+    const data = await this.usersInfoRepository.findOneById(requestedResourceId, requestedUserId); // prettier-ignore
+    if (!data) throw new NotFoundException();
+
+    return data;
   }
 
-  @UseGuards(JWTAuthGuard)
-  @Get('phone')
-  async getPhoneField(@UserId() userId: string) {}
+  @ApiOkResponse({
+    type: UserInfoResponseDto,
+    headers: { ContentLocation: { description: 'users/:userId/info' } },
+  })
+  @ApiCreatedResponse({
+    type: UserInfoResponseDto,
+    headers: { ContentLocation: { description: 'users/:userId/info' } },
+  })
+  @ApiConflictResponse({
+    description:
+      'The resource could not be updated or created.' +
+      ' Given resource id is not valid or outdated.' +
+      ' Please retrieve the latest version and try again.' +
+      'Possibly Race problem has been occured:' +
+      'https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#unique-key-constraint-errors-on-upserts',
+  })
+  @ApiForbiddenResponse({
+    description: '',
+  })
+  @UseGuards(JWTAuthGuard, ResourceAccessGuard)
+  // @UseGuards(ResourceAccessGuard)
+  @Put(`:${PARAM_USER_INFO_ID}`) // resourceId is required crutch to identify if update or create happened
+  async updateAllFields(
+    @Param(PARAM_USER_ID) requestedUserId: string,
+    @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
+    @UserId() userId: string,
+    @Body() payload: UpdateUserInfoDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const entity = new UserInfoEntity({ ...payload, userId: requestedUserId });
+    await entity.fillOptionalNullables();
+    const result = await this.usersInfoRepository.upsertOneById(
+      requestedResourceId,
+      requestedUserId,
+      entity,
+    );
+    const status = result.id === requestedResourceId ? 200 : 201;
+    res.status(status);
+    res.setHeader('Content-location', `users/${result.userId}/info`);
+    return result;
+  }
 
-  @UseGuards(JWTAuthGuard)
-  @Get('address')
-  async getAddressField(@UserId() userId: string) {}
+  @ApiNotFoundResponse({
+    description: 'Not found',
+  })
+  @ApiOkResponse({
+    type: UserInfoResponseDto,
+  })
+  @UseGuards(JWTAuthGuard, ResourceAccessGuard)
+  // @UseGuards(ResourceAccessGuard)
+  @Patch(`:${PARAM_USER_INFO_ID}`)
+  async updatePartialFields(
+    @Param(PARAM_USER_ID) requestedUserId: string,
+    @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
+    @UserId() userId: string,
+    @Body() payload: UpdateUserInfoDto,
+  ) {
+    const result = await this.usersInfoRepository.updateOneById(
+      requestedResourceId,
+      requestedUserId,
+      new UserInfoEntity({ ...payload, userId: requestedUserId }),
+    );
+    if (!result) throw new NotFoundException();
+    return result;
+  }
 
-  @UseGuards(JWTAuthGuard)
-  @Get('about')
-  async getAboutField(@UserId() userId: string) {}
-
-  @UseGuards(JWTAuthGuard)
-  @Put()
-  async updateAllFields(@UserId() userId: string) {}
-
-  @UseGuards(JWTAuthGuard)
-  @Patch()
-  async updateFields(@UserId() userId: string) {}
-
-  @UseGuards(JWTAuthGuard)
-  @Delete()
-  async deleteAllFields(@UserId() userId: string) {}
-
-  @UseGuards(JWTAuthGuard)
-  @Delete('name')
-  async deleteNameField(@UserId() userId: string) {}
-
-  @UseGuards(JWTAuthGuard)
-  @Delete('phone')
-  async deletePhoneField(@UserId() userId: string) {}
-
-  @UseGuards(JWTAuthGuard)
-  @Delete('address')
-  async deleteAddressField(@UserId() userId: string) {}
-
-  @UseGuards(JWTAuthGuard)
-  @Delete('about')
-  async deleteAboutField(@UserId() userId: string) {}
+  @ApiNoContentResponse({
+    description: 'No Content',
+  })
+  @UseGuards(JWTAuthGuard, ResourceAccessGuard)
+  // @UseGuards(ResourceAccessGuard)
+  @Delete(`:${PARAM_USER_INFO_ID}`)
+  async delete(
+    @Param(PARAM_USER_ID) requestedUserId: string,
+    @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
+    @UserId() userId: string,
+  ) {
+    this.usersInfoRepository.deleteOneById(
+      requestedResourceId,
+      requestedUserId,
+    );
+  }
 }

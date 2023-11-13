@@ -23,7 +23,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       rootPath: join(__dirname, '..', 'client'),
     }),
     AccountsModule,
-    SharedJwtModule,
   ],
   controllers: [],
   providers: [],

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,11 +8,13 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from 'src/accounts/users/entities/user.entity';
 import { UsersRepository } from 'src/accounts/users/repositories/users.repository';
+import { RefreshTokensRepository } from '../repositories/refresh-tokens.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UsersRepository,
+    private readonly refreshTokensRepository: RefreshTokensRepository,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -22,36 +25,38 @@ export class AuthService {
         'Email already in use. Please use a different email address.',
       );
     }
-    const userEntity = UserEntity.Empty;
-    userEntity.email = email;
+
+    const userEntity = new UserEntity({ email: email });
     await userEntity.setPassword(password);
 
     const storedUserEntity = await this.usersRepository.createOne(userEntity);
     return { user: await storedUserEntity.getPublic() };
   }
 
+  private async generateAccessToken() {
+
+  }
+  private async generateRefreshToken() {
+    
+  }
+
   async login({ email, password }) {
     const userEntity = await this.usersRepository.findOneByEmail(email);
-    await this.validateLogin(userEntity, password);
+    if (!userEntity) {
+      throw new UnauthorizedException(
+        'Authorization failed. The password or email are incorrect.',
+      );
+    }
 
-    const jwt_token = await this.jwtService.signAsync({ id: userEntity.id });
+    await userEntity.validatePassword(password);
+    const jwt_token = await this.jwtService.signAsync(
+      { id: userEntity.id },
+      // { expiresIn: 111 },
+    );
 
     return {
       user: await userEntity.getPublic(),
       token: jwt_token,
     };
-  }
-
-  async validateLogin(userEntity: UserEntity, password: string) {
-    if (!userEntity) {
-      throw new NotFoundException('User with this email does not exist.');
-    }
-
-    const isCorrectPassword = await userEntity.validatePassword(password);
-    if (!isCorrectPassword) {
-      throw new UnauthorizedException(
-        'Authentication failed. The password is incorrect.',
-      );
-    }
   }
 }

@@ -51,6 +51,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/events/tsconfig.lib.json"
       }
+    },
+    "redis-cloud": {
+      "type": "library",
+      "root": "libs/redis-cloud",
+      "entryFile": "index",
+      "sourceRoot": "libs/redis-cloud/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/redis-cloud/tsconfig.lib.json"
+      }
     }
   }
 }

@@ -42,11 +42,12 @@ export class AuthController {
   }
 
   @ApiQuery({ type: LoginDto })
-  @ApiNotFoundResponse({
-    description: 'User with this email does not exist.',
-  })
+  // @ApiNotFoundResponse({ // !replace with unauthorized exception
+  //   description:
+  //     'The provided email does not exist in our system. Please double-check your email or sign up to create an account.',
+  // })
   @ApiUnauthorizedResponse({
-    description: 'Authentication failed. The password is incorrect.',
+    description: 'Authorization failed. The password or email are incorrect.',
   })
   @ApiCreatedResponse({
     type: LoginResponseDto,

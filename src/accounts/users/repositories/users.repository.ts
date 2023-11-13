@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService, Prisma, User } from '@app/prisma-client-library';
+import { PrismaService, PrismaClient, User } from '@app/prisma-client-library';
 import { UserEntity } from '../entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EventTypeDbAccounts, IEventDbPayload } from '@app/events';
@@ -18,7 +18,7 @@ export class UsersRepository {
   async createOne(data: UserEntity): Promise<UserEntity> {
     try {
       const dbUser = await this.prisma.user.create({
-        data: data,
+        data: { ...data.getCreate() },
       });
 
       const eventPayload: IEventDbPayload = {
@@ -28,7 +28,7 @@ export class UsersRepository {
 
       return new UserEntity(dbUser);
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e instanceof PrismaClient.PrismaClientKnownRequestError) {
         switch (e.code) {
           case 'P2002':
             throw new ConflictException(
@@ -40,22 +40,22 @@ export class UsersRepository {
     }
   }
 
-  async updateOne(
-    userId: string,
+  async updateOneById(
+    id: string,
     data: UserEntity,
   ): Promise<UserEntity | null> {
     try {
       const dbUser = await this.prisma.user.update({
-        where: { id: userId },
-        data: data.getUpdate(),
+        where: { id: id },
+        data: { ...data.getUpdate() },
       });
       return new UserEntity(dbUser);
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e instanceof PrismaClient.PrismaClientKnownRequestError) {
         switch (e.code) {
           case 'P2016':
-            return null;
-          // throw new NotFoundException();
+            throw new NotFoundException();
+          // return null;
         }
       }
       throw e;
@@ -63,7 +63,7 @@ export class UsersRepository {
   }
 
   private async queryFindOneUnique(
-    filter: Prisma.UserWhereUniqueInput,
+    filter: PrismaClient.UserWhereUniqueInput,
   ): Promise<User | null> {
     try {
       const dbUser = await this.prisma.user.findUnique({
@@ -71,7 +71,7 @@ export class UsersRepository {
       });
       return dbUser;
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e instanceof PrismaClient.PrismaClientKnownRequestError) {
         switch (e.code) {
           case 'P2016':
             return null;
@@ -92,17 +92,19 @@ export class UsersRepository {
     return dbUser ? new UserEntity(dbUser) : null;
   }
 
-  async deleteOneByEmail(email: string): Promise<boolean> {
+  async deleteOneByEmail(email: string): Promise<UserEntity | null> {
     try {
       const dbUser = await this.prisma.user.delete({
         where: { email: email },
+        select: {}, // select nothing
       });
-      return !!dbUser;
+      return null;
+      // return new UserEntity(dbUser);
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e instanceof PrismaClient.PrismaClientKnownRequestError) {
         switch (e.code) {
-          case 'P2025':
-            return true;
+          case 'P2016':
+            return null;
         }
       }
       throw e;

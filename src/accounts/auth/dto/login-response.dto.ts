@@ -4,14 +4,14 @@ import { IsDefined, IsEmail, IsString, Length } from 'class-validator';
 
 export class UserPublicDto implements IUserPublic {
   @ApiProperty()
-  email: string;
-  @ApiProperty()
   id?: string;
+  @ApiProperty()
+  email?: string;
 }
 
 export class LoginResponseDto {
   @ApiProperty({ type: UserPublicDto })
-  user: UserPublicDto;
+  user!: UserPublicDto;
   @ApiProperty()
-  token: string;
+  token!: string;
 }

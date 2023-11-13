@@ -13,11 +13,13 @@ datasource db {
 }
 
 model User {
-  id           String @id @unique @default(cuid())
-  email        String @unique
+  id           String    @id @unique @default(cuid())
+  email        String    @unique
   passwordHash String
+  userInfo     UserInfo?
 
-  userInfo UserInfo?
+  @@index(fields: [email(sort: Asc)])
+  // @updatedAt // Warning! timezones problem?
 }
 
 model UserInfo {
@@ -29,5 +31,5 @@ model UserInfo {
   address String?
   about   String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) @ignore
 }

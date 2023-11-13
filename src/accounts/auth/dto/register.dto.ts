@@ -7,11 +7,11 @@ export class RegisterDto {
   @IsString()
   @Length(5, 255)
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty()
   @IsDefined()
   @IsString()
   @Length(8, 128)
-  password: string;
+  password!: string;
 }
