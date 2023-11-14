@@ -1,4 +1,8 @@
-import { IJWTPayload } from '@app/interfaces/interfaces/jwt-payload.interface';
+import {
+  IJWTPayloadAccess,
+  IJWTPayloadBase,
+  IJWTPayloadRefresh,
+} from '@app/interfaces/interfaces/jwt-payload.interface';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -16,7 +20,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ id, exp }: IJWTPayload) {
+  async validate({
+    id,
+    exp,
+  }: IJWTPayloadBase & (IJWTPayloadAccess | IJWTPayloadRefresh)) {
     const currentTimestamp = date.getTime() / 1000;
     if (exp < currentTimestamp) {
       throw new UnauthorizedException('Token has expired');

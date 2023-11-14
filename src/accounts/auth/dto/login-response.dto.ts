@@ -13,5 +13,7 @@ export class LoginResponseDto {
   @ApiProperty({ type: UserPublicDto })
   user!: UserPublicDto;
   @ApiProperty()
-  token!: string;
+  access_token!: string;
+  @ApiProperty()
+  refresh_token!: string;
 }

@@ -14,4 +14,10 @@ export class LoginDto {
   @IsString()
   @Length(8, 64)
   password!: string;
+
+  @ApiProperty()
+  @IsDefined()
+  @IsString()
+  @Length(36, 36)
+  deviceId!: string;
 }

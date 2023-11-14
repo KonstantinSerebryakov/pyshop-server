@@ -1,4 +1,4 @@
-import { JWTAuthGuard, UserId } from '@app/shared-jwt';
+import { JWTAuthGuard } from '@app/shared-jwt';
 import {
   Controller,
   Get,
@@ -13,8 +13,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UsersRepository } from '../repositories/users.repository';
-import { ResourceAccessGuard } from '@app/shared-jwt/user-access.guard';
 import { UserResponseDto } from '../dto/user-response.dto';
+import { ResourceAccessGuard } from '@app/shared-jwt/guards/user-access.guard';
 
 const PARAM_USER_ID = 'userid';
 
@@ -35,10 +35,7 @@ export class UsersController {
   @UseGuards(JWTAuthGuard)
   @UseGuards(ResourceAccessGuard)
   @Get()
-  async getByUserId(
-    @Param(PARAM_USER_ID) requestedUserId: string,
-    @UserId() userId: string,
-  ) {
+  async getByUserId(@Param(PARAM_USER_ID) requestedUserId: string) {
     const data = await this.usersRepository.findOneById(requestedUserId); // prettier-ignore
     if (!data) throw new NotFoundException();
 

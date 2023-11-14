@@ -8,14 +8,16 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from 'src/accounts/users/entities/user.entity';
 import { UsersRepository } from 'src/accounts/users/repositories/users.repository';
-import { RefreshTokensRepository } from '../repositories/refresh-tokens.repository';
+import { RefreshTokensRepository } from '../../../../libs/shared-jwt/src/repositories/refresh-tokens.repository';
+import { JwtRefreshableService } from '@app/shared-jwt/services/jwt-refreshable.service';
+import { LoginDto } from '../dto/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly refreshTokensRepository: RefreshTokensRepository,
     private readonly jwtService: JwtService,
+    private readonly jwtServiceShared: JwtRefreshableService,
   ) {}
 
   async register({ email, password }) {
@@ -33,30 +35,27 @@ export class AuthService {
     return { user: await storedUserEntity.getPublic() };
   }
 
-  private async generateAccessToken() {
-
-  }
-  private async generateRefreshToken() {
-    
-  }
-
-  async login({ email, password }) {
-    const userEntity = await this.usersRepository.findOneByEmail(email);
-    if (!userEntity) {
+  async login(loginDto: LoginDto) {
+    const userEntity = await this.usersRepository.findOneByEmail(
+      loginDto.email,
+    );
+    if (!userEntity || !userEntity.id) {
       throw new UnauthorizedException(
         'Authorization failed. The password or email are incorrect.',
       );
     }
+    await userEntity.validatePassword(loginDto.password);
 
-    await userEntity.validatePassword(password);
-    const jwt_token = await this.jwtService.signAsync(
-      { id: userEntity.id },
-      // { expiresIn: 111 },
-    );
+    const { accessToken, refreshToken } =
+      await this.jwtServiceShared.generateTokens(
+        userEntity.id ?? '',
+        loginDto.deviceId,
+      );
 
     return {
       user: await userEntity.getPublic(),
-      token: jwt_token,
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
   }
 }

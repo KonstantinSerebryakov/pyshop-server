@@ -1,4 +1,4 @@
-import { JWTAuthGuard, UserId } from '@app/shared-jwt';
+import { JWTAuthGuard } from '@app/shared-jwt';
 import {
   Controller,
   Get,
@@ -29,7 +29,7 @@ import {
   PARAM_USER_ID,
   PARAM_USER_INFO_ID,
 } from '@app/interfaces/url-params/params';
-import { ResourceAccessGuard } from '@app/shared-jwt/user-access.guard';
+import { ResourceAccessGuard } from '@app/shared-jwt/guards/user-access.guard';
 
 @ApiTags('Users/Info')
 @Controller(`users/:${PARAM_USER_ID}/info`)
@@ -48,10 +48,7 @@ export class UsersInfoController {
   @UseGuards(JWTAuthGuard, ResourceAccessGuard)
   // @UseGuards(ResourceAccessGuard)
   @Get()
-  async getByUserId(
-    @Param(PARAM_USER_ID) requestedUserId: string,
-    @UserId() userId: string,
-  ) {
+  async getByUserId(@Param(PARAM_USER_ID) requestedUserId: string) {
     const data = await this.usersInfoRepository.findOneByUserId(requestedUserId); // prettier-ignore
     if (!data) throw new NotFoundException();
 
@@ -73,7 +70,6 @@ export class UsersInfoController {
   async getByResourceId(
     @Param(PARAM_USER_ID) requestedUserId: string,
     @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
-    @UserId() userId: string,
   ) {
     const data = await this.usersInfoRepository.findOneById(requestedResourceId, requestedUserId); // prettier-ignore
     if (!data) throw new NotFoundException();
@@ -106,7 +102,7 @@ export class UsersInfoController {
   async updateAllFields(
     @Param(PARAM_USER_ID) requestedUserId: string,
     @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
-    @UserId() userId: string,
+
     @Body() payload: UpdateUserInfoDto,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -135,7 +131,7 @@ export class UsersInfoController {
   async updatePartialFields(
     @Param(PARAM_USER_ID) requestedUserId: string,
     @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
-    @UserId() userId: string,
+
     @Body() payload: UpdateUserInfoDto,
   ) {
     const result = await this.usersInfoRepository.updateOneById(
@@ -156,7 +152,6 @@ export class UsersInfoController {
   async delete(
     @Param(PARAM_USER_ID) requestedUserId: string,
     @Param(PARAM_USER_INFO_ID) requestedResourceId: string,
-    @UserId() userId: string,
   ) {
     this.usersInfoRepository.deleteOneById(
       requestedResourceId,

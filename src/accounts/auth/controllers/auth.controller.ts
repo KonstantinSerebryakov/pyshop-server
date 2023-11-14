@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -6,20 +6,23 @@ import { Response } from 'express';
 import {
   ApiConflictResponse,
   ApiCreatedResponse,
-  ApiHeader,
-  ApiHeaders,
-  ApiNotFoundResponse,
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { RegisterResponseDto } from '../dto/register-response.dto';
 import { LoginResponseDto } from '../dto/login-response.dto';
+import { AuthToken, JWTAuthGuard } from '@app/shared-jwt';
+import { JwtRefreshableService } from '@app/shared-jwt/services/jwt-refreshable.service';
+import { TokensRefreshResponseDto } from '../dto/tokens-refresh-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtServiceShared: JwtRefreshableService,
+  ) {}
 
   @ApiQuery({ type: RegisterDto })
   @ApiConflictResponse({
@@ -42,10 +45,6 @@ export class AuthController {
   }
 
   @ApiQuery({ type: LoginDto })
-  // @ApiNotFoundResponse({ // !replace with unauthorized exception
-  //   description:
-  //     'The provided email does not exist in our system. Please double-check your email or sign up to create an account.',
-  // })
   @ApiUnauthorizedResponse({
     description: 'Authorization failed. The password or email are incorrect.',
   })
@@ -55,6 +54,21 @@ export class AuthController {
   @Post('signin')
   async login(@Body() dto: LoginDto) {
     const payload = this.authService.login(dto);
+
+    return payload;
+  }
+
+  @ApiQuery({ type: LoginDto })
+  @ApiUnauthorizedResponse({
+    description: 'Refresh token is not valid. navigate to signin.',
+  })
+  @ApiCreatedResponse({
+    type: TokensRefreshResponseDto,
+  })
+  @Post('refresh')
+  @UseGuards(JWTAuthGuard)
+  async refresh(@AuthToken() token: string) {
+    const payload = this.jwtServiceShared.revokeTokens(token);
 
     return payload;
   }

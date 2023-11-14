@@ -64,10 +64,12 @@ export class UsersRepository {
 
   private async queryFindOneUnique(
     filter: PrismaClient.UserWhereUniqueInput,
+    select: PrismaClient.UserSelectScalar | null = null,
   ): Promise<User | null> {
     try {
       const dbUser = await this.prisma.user.findUnique({
         where: filter,
+        select: select,
       });
       return dbUser;
     } catch (e) {
@@ -80,6 +82,15 @@ export class UsersRepository {
       }
       throw e;
     }
+  }
+
+  async findOneUniqueFieldsByEmail(email: string) {
+    const dbUser = await this.queryFindOneUnique(
+      { email: email },
+      { id: true, email: true },
+    );
+    // Note: transformation required due to the prisma typing problem
+    return dbUser ? { id: dbUser.id, email: dbUser.email } : null;
   }
 
   async findOneByEmail(email: string): Promise<UserEntity | null> {
