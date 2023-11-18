@@ -1,4 +1,4 @@
-import { JWTAuthGuard } from '@app/shared-jwt';
+import { JWTAuthGuard, UserId } from '@app/shared-jwt';
 import {
   Controller,
   Get,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Res,
   NotFoundException,
+  Post,
 } from '@nestjs/common';
 import { UsersInfoRepository } from '../repositories/users-info.repository';
 import { UpdateUserInfoDto } from '../dto/update-users-info.dto';
@@ -43,10 +44,9 @@ export class UsersInfoController {
     type: UserInfoResponseDto,
   })
   @ApiForbiddenResponse({
-    description: 'you do not have permission to access this resource',
+    description: 'You do not have access to this resource',
   })
   @UseGuards(JWTAuthGuard, ResourceAccessGuard)
-  // @UseGuards(ResourceAccessGuard)
   @Get()
   async getByUserId(@Param(PARAM_USER_ID) requestedUserId: string) {
     const data = await this.usersInfoRepository.findOneByUserId(requestedUserId); // prettier-ignore
@@ -62,10 +62,9 @@ export class UsersInfoController {
     type: UserInfoResponseDto,
   })
   @ApiForbiddenResponse({
-    description: 'you do not have permission to access this resource',
+    description: 'You do not have access to this resource',
   })
   @UseGuards(JWTAuthGuard, ResourceAccessGuard)
-  // @UseGuards(ResourceAccessGuard)
   @Get(`:${PARAM_USER_INFO_ID}`)
   async getByResourceId(
     @Param(PARAM_USER_ID) requestedUserId: string,
@@ -75,6 +74,30 @@ export class UsersInfoController {
     if (!data) throw new NotFoundException();
 
     return data;
+  }
+
+  @ApiCreatedResponse({
+    type: UserInfoResponseDto,
+    headers: { ContentLocation: { description: 'users/:userId/info' } },
+  })
+  @ApiConflictResponse({
+    description:
+      'There is a unique constraint violation, a new user cannot be created with this email',
+  })
+  @ApiForbiddenResponse({
+    description: 'You do not have access to this resource',
+  })
+  @UseGuards(JWTAuthGuard, ResourceAccessGuard)
+  @Post() // resourceId is required crutch to identify if update or create happened
+  async createOneUnique(
+    @Param(PARAM_USER_ID) requestedUserId: string,
+    @Body() payload: UpdateUserInfoDto,
+    @UserId() userId: string,
+  ) {
+    const entity = new UserInfoEntity({ ...payload, userId: userId });
+    // await entity.fillOptionalNullables();
+    const result = await this.usersInfoRepository.createOne(entity);
+    return result;
   }
 
   @ApiOkResponse({
@@ -94,10 +117,9 @@ export class UsersInfoController {
       'https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#unique-key-constraint-errors-on-upserts',
   })
   @ApiForbiddenResponse({
-    description: '',
+    description: 'You do not have access to this resource',
   })
   @UseGuards(JWTAuthGuard, ResourceAccessGuard)
-  // @UseGuards(ResourceAccessGuard)
   @Put(`:${PARAM_USER_INFO_ID}`) // resourceId is required crutch to identify if update or create happened
   async updateAllFields(
     @Param(PARAM_USER_ID) requestedUserId: string,
@@ -106,6 +128,11 @@ export class UsersInfoController {
     @Body() payload: UpdateUserInfoDto,
     @Res({ passthrough: true }) res: Response,
   ) {
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(null);
+      }, 1000);
+    });
     const entity = new UserInfoEntity({ ...payload, userId: requestedUserId });
     await entity.fillOptionalNullables();
     const result = await this.usersInfoRepository.upsertOneById(
@@ -116,6 +143,7 @@ export class UsersInfoController {
     const status = result.id === requestedResourceId ? 200 : 201;
     res.status(status);
     res.setHeader('Content-location', `users/${result.userId}/info`);
+    console.log('handled!!handled!!handled!!handled!!handled!!handled!!');
     return result;
   }
 
@@ -126,7 +154,6 @@ export class UsersInfoController {
     type: UserInfoResponseDto,
   })
   @UseGuards(JWTAuthGuard, ResourceAccessGuard)
-  // @UseGuards(ResourceAccessGuard)
   @Patch(`:${PARAM_USER_INFO_ID}`)
   async updatePartialFields(
     @Param(PARAM_USER_ID) requestedUserId: string,
@@ -147,7 +174,6 @@ export class UsersInfoController {
     description: 'No Content',
   })
   @UseGuards(JWTAuthGuard, ResourceAccessGuard)
-  // @UseGuards(ResourceAccessGuard)
   @Delete(`:${PARAM_USER_INFO_ID}`)
   async delete(
     @Param(PARAM_USER_ID) requestedUserId: string,

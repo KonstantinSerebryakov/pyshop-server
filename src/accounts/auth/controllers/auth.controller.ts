@@ -68,7 +68,7 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(JWTAuthGuard)
   async refresh(@AuthToken() token: string) {
-    const payload = this.jwtServiceShared.revokeTokens(token);
+    const payload = this.jwtServiceShared.refreshTokens(token);
 
     return payload;
   }

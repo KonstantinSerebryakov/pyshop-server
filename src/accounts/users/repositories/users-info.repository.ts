@@ -57,8 +57,8 @@ export class UsersInfoRepository {
     try {
       const dbUserInfo = await this.prisma.userInfo.upsert({
         where: { id: id, userId: requestedUserId },
-        create: { ...data.getCreate() },
         update: { ...data.getUpdate() },
+        create: { ...data.getCreate(), id: id },
       });
       return new UserInfoEntity(dbUserInfo);
     } catch (e) {
@@ -167,11 +167,12 @@ export class UsersInfoRepository {
     try {
       const dbUserInfo = await this.prisma.userInfo.delete({
         where: { id: id, userId: requestedUserId },
-        select: {}, // select nothing
+        select: { id: true }, // select nothing
       });
       return null;
     } catch (e) {
       if (e instanceof PrismaClient.PrismaClientKnownRequestError) {
+        console.log(e.code);
         switch (e.code) {
           case 'P2016':
             return null;

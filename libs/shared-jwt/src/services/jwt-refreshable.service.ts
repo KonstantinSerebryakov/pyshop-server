@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokensRepository } from '../repositories/refresh-tokens.repository';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,6 +7,8 @@ import {
   IJWTPayloadBase,
   IJWTPayloadRefresh,
 } from '@app/interfaces/interfaces/jwt-payload.interface';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const ms = require('ms');
 
 @Injectable()
 export class JwtRefreshableService {
@@ -16,20 +18,24 @@ export class JwtRefreshableService {
   ) {}
 
   private async generateAccessToken(payload: IJWTPayloadAccess) {
+    const expiresIn = process.env.JWT_EXP_ACCESS ?? '100';
     const token = await this.jwtService.signAsync(payload, {
-      expiresIn: process.env.JWT_EXP_ACCESS,
+      expiresIn: expiresIn,
     });
-    return token;
+    return { exp: Math.floor(ms(expiresIn) / 1000), token: token };
   }
 
   private async generateRefreshToken(payload: Omit<IJWTPayloadRefresh, 'id'>) {
+    const expiresIn = process.env.JWT_EXP_REFRESH ?? '100';
     const token = await this.jwtService.signAsync(
       { ...payload, id: uuidv4() },
       {
-        expiresIn: process.env.JWT_EXP_REFRESH,
+        expiresIn: expiresIn,
       },
     );
-    return token;
+    console.log(expiresIn);
+    console.log(ms(expiresIn));
+    return { exp: Math.floor(ms(expiresIn) / 1000), token: token };
   }
 
   private async extractTokenPayload<T extends IJWTPayloadBase>(
@@ -53,7 +59,7 @@ export class JwtRefreshableService {
     );
   }
 
-  async revokeTokens(refreshToken: string) {
+  async refreshTokens(refreshToken: string) {
     const extractedPayload =
       await this.extractRefreshTokenPayload(refreshToken);
     const payloadRefresh: IJWTPayloadRefresh = {
@@ -64,10 +70,9 @@ export class JwtRefreshableService {
     const payloadAccess: IJWTPayloadAccess = { id: extractedPayload.userId };
 
     const now = Math.floor(Date.now() / 1000);
-    const expiresIn = extractedPayload.exp - now;
-
+    const updatedTokenExpiresIn = extractedPayload.exp - now;
     const updatedRefreshToken = this.jwtService.sign(payloadRefresh, {
-      expiresIn,
+      expiresIn: updatedTokenExpiresIn,
     });
     await this.refreshTokensRepository.updateRefreshToken(
       extractedPayload.userId,
@@ -77,7 +82,13 @@ export class JwtRefreshableService {
     );
 
     const accessToken = await this.generateAccessToken(payloadAccess);
-    return { access_token: accessToken, refresh_token: updatedRefreshToken };
+    return {
+      access_token: accessToken,
+      refresh_token: {
+        exp: updatedTokenExpiresIn,
+        token: updatedRefreshToken,
+      },
+    };
   }
 
   async generateTokens(userId: string, deviceId: string) {
@@ -88,7 +99,7 @@ export class JwtRefreshableService {
     this.refreshTokensRepository.addRefreshToken(
       userId,
       deviceId,
-      refreshToken,
+      refreshToken.token,
     );
 
     // console.log(await this.refreshTokensRepository.print(userId, deviceId));
