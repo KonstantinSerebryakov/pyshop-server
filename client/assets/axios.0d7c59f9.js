@@ -1,0 +1,1 @@
+import{k as r}from"./index.541f43d9.js";import{a}from"./axios.49e4da64.js";function t(){return"https://pyshop-konstantin-serebryakov-8ebd937f65cc.herokuapp.com/api"}const e=a.create({baseURL:t()});var c=r(({app:o,store:s})=>{o.config.globalProperties.$axios=a,o.config.globalProperties.$api=e});export{e as api,c as default};
