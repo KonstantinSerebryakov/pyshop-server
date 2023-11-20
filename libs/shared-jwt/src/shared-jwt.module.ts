@@ -5,10 +5,15 @@ import { getJWTConfig } from './jwt/jwt.config';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { JwtRefreshableService } from './services/jwt-refreshable.service';
 import { RefreshTokensRepository } from './repositories/refresh-tokens.repository';
+import { PrismaClientLibraryModule } from '@app/prisma-client-library';
 
 @Global()
 @Module({
-  imports: [JwtModule.registerAsync(getJWTConfig()), PassportModule],
+  imports: [
+    JwtModule.registerAsync(getJWTConfig()),
+    PassportModule,
+    PrismaClientLibraryModule,
+  ],
   providers: [JwtStrategy, JwtRefreshableService, RefreshTokensRepository],
   exports: [JwtStrategy, JwtRefreshableService],
 })
