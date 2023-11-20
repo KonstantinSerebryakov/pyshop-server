@@ -1,1 +1,0 @@
-import{k as a}from"./index.213fbdb8.js";import{a as r}from"./axios.49e4da64.js";function t(){return"production"}const e=r.create({baseURL:t()});var c=a(({app:o,store:i})=>{o.config.globalProperties.$axios=r,o.config.globalProperties.$api=e});export{e as api,c as default};
