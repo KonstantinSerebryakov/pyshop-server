@@ -1,1 +1,0 @@
-import{k as t}from"./index.d170d1c9.js";import{u as e}from"./user-info-store.e36b79da.js";import"./index.e92490f7.js";import"./axios.49e4da64.js";import"./mitt.550594b0.js";import"./api.service.3b40eaf6.js";import"./axios.9b418265.js";var l=t(({app:o,store:r,router:i})=>{o.config.globalProperties.$eventBus,e(r)});export{l as default};
