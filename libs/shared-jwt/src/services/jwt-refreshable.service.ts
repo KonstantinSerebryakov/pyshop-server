@@ -22,6 +22,58 @@ export class JwtRefreshableService {
     const token = await this.jwtService.signAsync(payload, {
       expiresIn: expiresIn,
     });
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
+    console.log(Math.floor(ms(expiresIn)));
     return { exp: Math.floor(ms(expiresIn) / 1000), token: token };
   }
 
