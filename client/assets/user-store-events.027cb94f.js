@@ -1,1 +1,0 @@
-import{k as S,u as l}from"./index.9c2118fc.js";import{E as r}from"./event-bus.0df01741.js";var i=S(({app:s,store:a,router:u})=>{const o=s.config.globalProperties.$eventBus,e=l(a);o.on(r.LOGIN_SUCCESS,n=>{const t=n;e.$state.data=t.user,e.$state.token=t.token}),o.on(r.LOGOUT_SUCCESS,()=>{e.clear(),localStorage.clear(),sessionStorage.clear()})});export{i as default};
