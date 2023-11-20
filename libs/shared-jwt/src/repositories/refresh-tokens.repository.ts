@@ -15,8 +15,10 @@ export class RefreshTokensRepository {
     this.prisma.refreshTokens
       .update({
         where: {
-          userId: userId,
-          deviceId: deviceId,
+          deviceId_userId: {
+            userId: userId,
+            deviceId: deviceId,
+          },
           token: targetToken,
         },
         data: {
@@ -40,8 +42,10 @@ export class RefreshTokensRepository {
       .$transaction([
         this.prisma.refreshTokens.upsert({
           where: {
-            userId: userId,
-            deviceId: deviceId,
+            deviceId_userId: {
+              userId: userId,
+              deviceId: deviceId,
+            },
           },
           update: {
             token: token,
