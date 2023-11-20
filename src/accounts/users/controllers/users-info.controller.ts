@@ -143,7 +143,6 @@ export class UsersInfoController {
     const status = result.id === requestedResourceId ? 200 : 201;
     res.status(status);
     res.setHeader('Content-location', `users/${result.userId}/info`);
-    console.log('handled!!handled!!handled!!handled!!handled!!handled!!');
     return result;
   }
 

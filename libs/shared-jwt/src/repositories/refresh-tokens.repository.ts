@@ -54,13 +54,13 @@ export class RefreshTokensRepository {
   }
 
   async addRefreshToken(userId: string, deviceId: string, token: string) {
-    const exp = Math.floor(Date.now() / 1000);
+    const iat = Math.floor(Date.now() / 1000);
     const key = await this.generateRefreshKeyString(userId, deviceId);
     const listKey = await this.generateDeviceListKeyString(userId);
     this.redis
       .multi()
       .set(key, token)
-      .zadd(listKey, exp, key)
+      .zadd(listKey, iat, key)
       .zcard(listKey)
       .exec((err, results) => {
         if (!results) throw UnauthorizedException;
@@ -73,11 +73,6 @@ export class RefreshTokensRepository {
         }
       });
   }
-
-  // async print(userId: string, deviceId: string) {
-  //   const listKey = await this.generateDeviceListKeyString(userId);
-  //   return this.redis.zrange(listKey, 0, -1);
-  // }
 
   private async popExcessRefreshTokens(key: string, limit: number) {
     this.redis.zpopmin(key, limit);
