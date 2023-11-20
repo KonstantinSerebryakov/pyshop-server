@@ -13,13 +13,14 @@ datasource db {
 }
 
 model User {
-  id           String    @id @unique @default(cuid())
-  email        String    @unique
-  passwordHash String
-  userInfo     UserInfo?
+  id            String          @id @unique @default(cuid())
+  email         String          @unique
+  passwordHash  String
+  userInfo      UserInfo?
+  refreshTokens RefreshTokens[] @ignore
+  // @updatedAt // Warning! timezones problem?
 
   @@index(fields: [email(sort: Asc)])
-  // @updatedAt // Warning! timezones problem?
 }
 
 model UserInfo {
@@ -32,4 +33,22 @@ model UserInfo {
   about   String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade) @ignore
+}
+
+model RefreshTokens {
+  id       String @id @unique @default(cuid())
+  deviceId String
+  userId   String
+
+  token     String
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) @ignore
+
+  // Note: updated/created mismatch:
+  // https://github.com/prisma/prisma/issues/12572
+  // createdAt DateTime @default(now())
+  // updatedAt DateTime @updatedAt
+  @@unique([deviceId, userId])
+  @@index(fields: [userId, updatedAt(sort: Asc)])
 }
