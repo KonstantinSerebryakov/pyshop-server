@@ -12,73 +12,77 @@ export class RefreshTokensRepository {
     targetToken: string,
     newToken: string,
   ) {
-    this.prisma.refreshTokens
-      .update({
-        where: {
-          deviceId_userId: {
-            userId: userId,
-            deviceId: deviceId,
-          },
-          token: targetToken,
-        },
-        data: {
-          token: newToken,
-        },
-        select: {
-          id: true,
-          token: true,
-        },
-      })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .catch((e: unknown) => {
-        throw new UnauthorizedException(
-          'Refresh token is not valid. navigate to signin.',
-        );
-      });
-  }
-
-  async addRefreshToken(userId: string, deviceId: string, token: string) {
-    this.prisma
-      .$transaction([
-        this.prisma.refreshTokens.upsert({
+    return (
+      this.prisma.refreshTokens
+        .update({
           where: {
             deviceId_userId: {
               userId: userId,
               deviceId: deviceId,
             },
+            token: targetToken,
           },
-          update: {
-            token: token,
-          },
-          create: {
-            userId: userId,
-            deviceId: deviceId,
-            token: token,
-          },
-        }),
-        this.prisma.refreshTokens.findMany({
-          where: {
-            userId: userId,
+          data: {
+            token: newToken,
           },
           select: {
             id: true,
-            updatedAt: true,
+            token: true,
           },
-          orderBy: {
-            updatedAt: 'asc',
-          },
-        }),
-      ])
-      .then((results) => {
-        // const created = results[0];
-        const storedKeys = results[1];
-        const ids = storedKeys.map((key) => key.id);
-        this.popExcessRefreshTokens(userId, ids);
-      })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .catch((e: unknown) => {
-        throw UnauthorizedException;
-      });
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .catch((e: unknown) => {
+          throw new UnauthorizedException(
+            'Refresh token is not valid. navigate to signin.',
+          );
+        })
+    );
+  }
+
+  async addRefreshToken(userId: string, deviceId: string, token: string) {
+    return (
+      this.prisma
+        .$transaction([
+          this.prisma.refreshTokens.upsert({
+            where: {
+              deviceId_userId: {
+                userId: userId,
+                deviceId: deviceId,
+              },
+            },
+            update: {
+              token: token,
+            },
+            create: {
+              userId: userId,
+              deviceId: deviceId,
+              token: token,
+            },
+          }),
+          this.prisma.refreshTokens.findMany({
+            where: {
+              userId: userId,
+            },
+            select: {
+              id: true,
+              updatedAt: true,
+            },
+            orderBy: {
+              updatedAt: 'asc',
+            },
+          }),
+        ])
+        .then((results) => {
+          // const created = results[0];
+          const storedKeys = results[1];
+          const ids = storedKeys.map((key) => key.id);
+          this.popExcessRefreshTokens(userId, ids);
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .catch((e: unknown) => {
+          throw UnauthorizedException;
+        })
+    );
   }
 
   private async popExcessRefreshTokens(userId: string, ids: string[]) {
@@ -99,5 +103,15 @@ export class RefreshTokensRepository {
     } catch (e: unknown) {
       //
     }
+  }
+
+  public async removeRefreshToken(token: string) {
+    return this.prisma.refreshTokens
+      .deleteMany({
+        where: { token: token },
+      })
+      .catch((e: unknown) => {
+        //
+      });
   }
 }

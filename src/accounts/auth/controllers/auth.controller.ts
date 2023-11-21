@@ -6,6 +6,7 @@ import { Response } from 'express';
 import {
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -15,6 +16,7 @@ import { LoginResponseDto } from '../dto/login-response.dto';
 import { AuthToken, JWTAuthGuard } from '@app/shared-jwt';
 import { JwtRefreshableService } from '@app/shared-jwt/services/jwt-refreshable.service';
 import { TokensRefreshResponseDto } from '../dto/tokens-refresh-response.dto';
+import { LogoutDto } from '../dto/logout.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -58,7 +60,6 @@ export class AuthController {
     return payload;
   }
 
-  @ApiQuery({ type: LoginDto })
   @ApiUnauthorizedResponse({
     description: 'Refresh token is not valid. navigate to signin.',
   })
@@ -71,5 +72,16 @@ export class AuthController {
     const payload = this.jwtServiceShared.refreshTokens(token);
 
     return payload;
+  }
+
+  @ApiOkResponse({
+  })
+  @Post('logout')
+  async logout(
+    @Res({ passthrough: true }) res: Response,
+    @Body() dto: LogoutDto,
+  ) {
+    await this.jwtServiceShared.unvalidateRefreshToken(dto.token);
+    res.status(200);
   }
 }

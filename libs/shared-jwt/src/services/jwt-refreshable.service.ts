@@ -22,58 +22,6 @@ export class JwtRefreshableService {
     const token = await this.jwtService.signAsync(payload, {
       expiresIn: expiresIn,
     });
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
-    console.log(Math.floor(ms(expiresIn)));
     return { exp: Math.floor(ms(expiresIn) / 1000), token: token };
   }
 
@@ -85,8 +33,6 @@ export class JwtRefreshableService {
         expiresIn: expiresIn,
       },
     );
-    console.log(expiresIn);
-    console.log(ms(expiresIn));
     return { exp: Math.floor(ms(expiresIn) / 1000), token: token };
   }
 
@@ -148,15 +94,17 @@ export class JwtRefreshableService {
       userId: userId,
       deviceId: deviceId,
     });
-    this.refreshTokensRepository.addRefreshToken(
+    await this.refreshTokensRepository.addRefreshToken(
       userId,
       deviceId,
       refreshToken.token,
     );
 
-    // console.log(await this.refreshTokensRepository.print(userId, deviceId));
-
     const accessToken = await this.generateAccessToken({ id: userId });
     return { accessToken, refreshToken };
+  }
+
+  unvalidateRefreshToken(token: string) {
+    return this.refreshTokensRepository.removeRefreshToken(token);
   }
 }

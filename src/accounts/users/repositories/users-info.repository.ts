@@ -172,7 +172,6 @@ export class UsersInfoRepository {
       return null;
     } catch (e) {
       if (e instanceof PrismaClient.PrismaClientKnownRequestError) {
-        console.log(e.code);
         switch (e.code) {
           case 'P2016':
             return null;
