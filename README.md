@@ -4,7 +4,14 @@ Monorepo Nest.js server for [task](https://jl.pyshop.ru/tasks/typescript-dev/).
 
 Tested with Postman.
 
-***Note:*** CI/CD configured with Github Actions: client automatically injected from main branch to server and to heroku;
+**_Note:_** CI/CD configured with Github Actions: client automatically injected from main branch to server and to heroku;
+
+**_P.S._** In other repositories you can find:
+
+- Microservices with rabbitMQ, Nest.js and NX monorepo.
+- Jest code coverage with mocking, e2e.
+- React
+- small js code snippets with iterators, iterables, promises.
 
 ### Features
 
@@ -17,6 +24,7 @@ Tested with Postman.
 - Authentification:
   - JWT with implementation of refresh tokens
 - CRUD: GET, POST, PUT, PATCH, DELETE,
+- Swagger docs (url: apiref),
 
 ## Installation
 
