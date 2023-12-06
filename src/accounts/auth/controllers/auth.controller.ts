@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -74,8 +74,7 @@ export class AuthController {
     return payload;
   }
 
-  @ApiOkResponse({
-  })
+  @ApiOkResponse({})
   @Post('logout')
   async logout(
     @Res({ passthrough: true }) res: Response,

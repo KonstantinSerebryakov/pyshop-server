@@ -3,7 +3,8 @@ import { IUserInfo } from './user-info.interface';
 export interface IUser {
   id?: string;
   email?: string;
-  passwordHash?: string;
+  passwordHash?: string | null;
+  type?: string;
 
   userInfo?: IUserInfo | null;
 }
@@ -15,7 +16,7 @@ export interface IUserPublic extends Omit<IUser, 'passwordHash' | 'userInfo'> {}
 export interface IUserUpdate extends Omit<IUser, 'id' | 'userInfo'> {}
 export interface IUserCreate extends Omit<IUser, 'id'> {
   email: string;
-  passwordHash: string;
+  passwordHash: string | null;
 }
 
 /* 

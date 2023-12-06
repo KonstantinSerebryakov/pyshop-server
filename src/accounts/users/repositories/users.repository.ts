@@ -94,7 +94,9 @@ export class UsersRepository {
   }
 
   async findOneByEmail(email: string): Promise<UserEntity | null> {
-    const dbUser = await this.queryFindOneUnique({ email: email });
+    const dbUser = await this.queryFindOneUnique({
+      email: email.toLowerCase(),
+    });
     return dbUser ? new UserEntity(dbUser) : null;
   }
 

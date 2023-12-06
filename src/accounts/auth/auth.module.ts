@@ -5,6 +5,8 @@ import { AuthService } from './services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { getJWTConfig } from '@app/shared-jwt/jwt/jwt.config';
 import { SharedJwtModule } from '@app/shared-jwt';
+import { OAuthController } from './controllers/oauth.controller';
+import { GoogleService } from './services/google.service';
 
 @Module({
   imports: [
@@ -12,7 +14,7 @@ import { SharedJwtModule } from '@app/shared-jwt';
     JwtModule.registerAsync(getJWTConfig()),
     SharedJwtModule,
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
+  controllers: [AuthController, OAuthController],
+  providers: [AuthService, GoogleService],
 })
 export class AuthModule {}

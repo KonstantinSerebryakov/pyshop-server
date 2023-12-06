@@ -39,3 +39,4 @@ lerna-debug.log*
 # client
 heroku.bat
 .env
+src/accounts/auth/controllers/auth.controller.spec.ts

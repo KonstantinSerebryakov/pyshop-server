@@ -14,14 +14,24 @@ datasource db {
 
 model User {
   id            String          @id @unique @default(cuid())
+  type          String          @default("classic")
   email         String          @unique
-  passwordHash  String
+  passwordHash  String?
   userInfo      UserInfo?
   refreshTokens RefreshTokens[] @ignore
-  // @updatedAt // Warning! timezones problem?
+
+  createdAt DateTime @default(now())
+  // typeId        Int            @default(0)
+  // userType      UserType       @relation(fields: [typeId], references: [id]) @ignore
 
   @@index(fields: [email(sort: Asc)])
 }
+
+// model UserType {
+//   id   Int    @id @unique @default(autoincrement())
+//   name String @unique
+//   // user User[] @ignore
+// }
 
 model UserInfo {
   id     String @id @unique @default(cuid())

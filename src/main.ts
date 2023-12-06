@@ -25,7 +25,7 @@ async function bootstrap() {
   SwaggerModule.setup('apiref', app, documentSwagger);
 
   const PORT = process.env.PORT ?? '3333';
-  // app.enableCors(); // TODO: disable in production
+  app.enableCors(); // TODO: disable in production
   await app.listen(PORT);
   Logger.log(`the application is running on the localhost:${PORT}`);
 }

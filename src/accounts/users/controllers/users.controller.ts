@@ -32,8 +32,7 @@ export class UsersController {
   @ApiForbiddenResponse({
     description: 'you do not have permission to access this resource',
   })
-  @UseGuards(JWTAuthGuard)
-  @UseGuards(ResourceAccessGuard)
+  @UseGuards(JWTAuthGuard, ResourceAccessGuard)
   @Get()
   async getByUserId(@Param(PARAM_USER_ID) requestedUserId: string) {
     const data = await this.usersRepository.findOneById(requestedUserId); // prettier-ignore

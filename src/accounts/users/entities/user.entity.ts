@@ -8,6 +8,7 @@ export class UserEntity implements IUser {
   email?: string;
   passwordHash?: string;
   userInfo?: UserInfoEntity;
+  type?: string = 'classic';
 
   static get Empty(): UserEntity {
     return new UserEntity({ email: '', passwordHash: '' });
@@ -21,17 +22,25 @@ export class UserEntity implements IUser {
   }
 
   public getPublic(): IUserPublic {
-    return { id: this.id, email: this.email };
+    return { id: this.id, email: this.email, type: this.type };
   }
 
   public getCreate(): IUserCreate {
-    if (!this.passwordHash || !this.email)
+    if ((this.type === 'classic' && !this.passwordHash) || !this.email)
       throw Error('missed required fields');
-    return { email: this.email, passwordHash: this.passwordHash };
+    return {
+      email: this.email.toLowerCase(),
+      passwordHash: this.passwordHash ?? null,
+      type: this.type,
+    };
   }
 
   public getUpdate(): IUserUpdate {
-    return { email: this.email, passwordHash: this.passwordHash };
+    return {
+      email: this.email?.toLowerCase(),
+      passwordHash: this.passwordHash ?? null,
+      type: this.type,
+    };
   }
 
   public async getNested(): Promise<IUser> {
@@ -47,6 +56,8 @@ export class UserEntity implements IUser {
   }
 
   public async validatePassword(password: string): Promise<boolean> {
+    if (this.passwordHash === null)
+      throw new UnauthorizedException('invalid password'); // TODO: message about user types???
     if (!this.passwordHash) throw Error('missed passwordHash field');
     const isValid = compare(password, this.passwordHash);
     if (!isValid) {
@@ -54,6 +65,7 @@ export class UserEntity implements IUser {
         'Authorization failed. The password or email are incorrect.',
       );
     }
+    console.log(this.passwordHash);
     return isValid;
   }
 }

@@ -8,7 +8,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from 'src/accounts/users/entities/user.entity';
 import { UsersRepository } from 'src/accounts/users/repositories/users.repository';
-import { RefreshTokensRepository } from '../../../../libs/shared-jwt/src/repositories/refresh-tokens.repository';
 import { JwtRefreshableService } from '@app/shared-jwt/services/jwt-refreshable.service';
 import { LoginDto } from '../dto/login.dto';
 
