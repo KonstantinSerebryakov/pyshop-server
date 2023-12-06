@@ -1,0 +1,3 @@
+import{A as n,H as o}from"./index.c8a79a65.js";import{N as s}from"./index.499e8ed9.js";import{b as c}from"./axios.a5465967.js";class b{static abortableRequest(e){const t=new AbortController,a=()=>{t.abort()},i=c.request({...e,signal:t.signal,timeout:3e4}).catch(r=>{if(r instanceof n)switch(r.status){case o.RequestTimeout:{s.create({type:"error",message:`RequestTimeout has been occured.
+`+e.url,position:"top"});break}case o.InternalServerError:{s.create({type:"error",message:`InternalServerError has been occured.
+`+e.url,position:"top"});break}}return Promise.reject(r)});return{abort:a,requestPromise:i}}}export{b as A};
