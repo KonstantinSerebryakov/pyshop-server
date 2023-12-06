@@ -59,13 +59,12 @@ export class UserEntity implements IUser {
     if (this.passwordHash === null)
       throw new UnauthorizedException('invalid password'); // TODO: message about user types???
     if (!this.passwordHash) throw Error('missed passwordHash field');
-    const isValid = compare(password, this.passwordHash);
+    const isValid = await compare(password, this.passwordHash);
     if (!isValid) {
       throw new UnauthorizedException(
         'Authorization failed. The password or email are incorrect.',
       );
     }
-    console.log(this.passwordHash);
     return isValid;
   }
 }
